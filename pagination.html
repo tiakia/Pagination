@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+    <title>分页</title>
+    <link rel="stylesheet" type="text/css" href="Pagination.css">
+    <style type="text/css">
+        #pagination-container{
+          width:1000px;
+          overflow:hidden;
+          text-align:center;
+          margin-left:auto;
+          margin-right:auto;
+          margin-top:50px;
+        }
+    </style>
+  </head>
+  <body>
+    
+<div id="pagination-container">
+  <div class="paginationjs paginationjs-big" style="float:right;">
+    <div class="paginationjs-pages">
+        <ul>
+            
+        </ul>
+    </div>
+    <div class="paginationjs-go-input">
+        <input type="text" class="J-paginationjs-go-pagenumber">
+    </div>
+    <div class="paginationjs-go-button">
+        <input type="button" class="J-paginationjs-go-button" value="Go">
+    </div>
+  </div>
+</div>
+<script type="text/javascript" src='jquery-1.11.3.js'></script>
+<script>
+  //页面加载时初始化页面数据
+  onload=function(){
+      /*$.ajax({
+        url:"special_district_goods.php?id=1&act=nextpage",
+        type:"GET",
+        dataType:"json",
+        //data:{"page",1},
+        success:function(data){
+          console.log(data);
+          var record_count = data.record_count; // 总的数据记录
+          var size = data.size; //每页显示的数量
+          var page = Math.ceil(record_count/size); //总页数
+          var goods = data.goods; //对象数组
+          if(record_count <=0) {
+            alert("暂无商品记录，你可以去别的地方逛一逛！");
+          }
+          var goodsHtml = "";
+          $.each(goods,function(i,list){ //list 为当前i的一个对象
+              goodsHtml += `
+                    <div class="item" id="li_${list.goods_id}">
+                      <div class="item-inner">
+                        <a class="add-cart" href="javascript:addToCart(${list.goods_id})" title="加入购物车"></a>
+                        <a href="${list.url}" title='${list.goods_name}' target="_blank" class="item-img">
+                        <img data-original="${list.goods_thumb}" src="themes/68ecshopcom_360buy/images/loading.gif"  class="pic_img_${list.goods_id}" height="160" width="160">
+                        </a>
+                        <p class="item-name"><a href="${list.url}" title="${list.goods_name}" target="_blank">${list.goods_name}</a></p>
+                        <div class="item-price">
+                        <span class="sale-price main-color">`
+              if(list.promote_price > 0){
+                goodsHtml += `
+                    ${list.promote_price}</span>
+                        </div>
+                      </div>
+                    </div>
+                `;
+              }else{
+                goodsHtml += `
+                  ${list.shop_price}</span>
+                        </div>
+                      </div>
+                    </div>
+                `;
+              }
+          });*/
+
+          var page = 15; //总页数
+          var pageHtml = `<li class="paginationjs-prev disabled"><a>«</a></li>
+                          <li class="paginationjs-page J-paginationjs-page active" data-num="1"><a>1</a></li>  
+                          `;
+          for(var i =1;i<page;i++){
+              if(page>=10) {
+                  pageHtml += `
+                          <li class="paginationjs-page J-paginationjs-page" data-num="2"><a href="">2</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="3"><a href="">3</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="4"><a href="">4</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="5"><a href="">5</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="6"><a href="">6</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="7"><a href="">7</a></li>
+                          <li class="paginationjs-ellipsis disabled"><a>...</a></li>
+                          <li class="paginationjs-page paginationjs-last J-paginationjs-page" data-num="${page}"><a href="">${page}</a></li>
+                  `;
+                  break;
+              }else{
+
+                if(i == (page-1) ){
+                  pageHtml += `
+                  
+                  <li class="paginationjs-page J-paginationjs-page paginationjs-last" data-num="${i+1}"><a>${i+1}</a></li>
+                  
+                `;
+                }else{
+
+                  pageHtml += `
+                  
+                  <li class="paginationjs-page J-paginationjs-page " data-num="${i+1}"><a>${i+1}</a></li>
+                  
+                `;
+
+                }           
+              }             
+          }
+          if(page>1){
+
+            pageHtml += '<li class="paginationjs-next J-paginationjs-next"  title="Next page"><a href="">»</a></li>';
+          }
+          if(page <= 1){
+            pageHtml += '<li class="paginationjs-next J-paginationjs-next disabled"  title="Next page"><a href="">»</a></li>';
+          }
+          $(".paginationjs-pages ul").html(pageHtml);
+          // $(".floor-content").html(goodsHtml);
+          $(".J-paginationjs-go-pagenumber").val(1);
+      //  }
+      //});
+  }
+  //点击页码按钮时发起异步请求
+  $(".paginationjs-pages ul").on("click","li a",function(e){
+     e.preventDefault();
+     var idx = $(this).parent().index(); //当idx == 3 的时候更新页码
+     var currentPage = parseInt($(this).parent().data("num"));
+     var totalPage = $(".paginationjs-pages ul").find(".paginationjs-last").data("num");
+     var num = $(this).parent().data("num");
+     if(num / 1){
+
+       $(this).parent().addClass("active").siblings(".active").removeClass("active");
+       
+     }
+     // 上一页，下一页可以点击
+    if(totalPage == 1){       
+            $(this).parent().siblings(".paginationjs-prev").addClass("disabled");
+            $(this).parent().siblings(".paginationjs-prev").addClass("disabled");
+
+    }
+
+    if(totalPage>=10){
+           // 第二页 变为 ...
+        if(idx >5 && idx <10 ) {
+             $(".paginationjs-pages ul").children("li").eq(2)
+                                        .addClass("disabled")
+                                        .children("a")
+                                        .html("<a>...</a>");    
+        } 
+        
+        if(idx == 1){
+            var pageHtml = "";
+            pageHtml += `<li class="paginationjs-prev disabled"><a>«</a></li>
+                          <li class="paginationjs-page J-paginationjs-page active" data-num="1"><a>1</a></li>  
+                         <li class="paginationjs-page J-paginationjs-page" data-num="2" ><a>2</a></li>
+                         <li class="paginationjs-page J-paginationjs-page" data-num="3"><a href="">3</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="4"><a href="">4</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="5"><a href="">5</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="6"><a href="">6</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="7"><a href="">7</a></li>
+                          <li class="paginationjs-ellipsis" disabled><a>...</a></li>
+                          <li class="paginationjs-page paginationjs-last J-paginationjs-page" data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                          <li class="paginationjs-next J-paginationjs-next"  title="Next page"><a href="">»</a></li>
+                        `;
+            $(".paginationjs-pages ul").html(pageHtml);
+        }
+
+        if(idx == 3 && $(".paginationjs-pages ul").children("li").eq(idx).data("num")>3){
+          var pageHtml = "";
+          if(currentPage<=5 && currentPage>4){
+
+              pageHtml += `<li class="paginationjs-prev disabled"><a>«</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                         <li class="paginationjs-page J-paginationjs-page" data-num="2" ><a>2</a></li>
+                         <li class="paginationjs-page J-paginationjs-page" data-num="3"><a href="">3</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="4"><a href="">4</a></li>
+                          <li class="paginationjs-page J-paginationjs-page active" data-num="5"><a href="">5</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="6"><a href="">6</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="7"><a href="">7</a></li>
+                          <li class="paginationjs-ellipsis" disabled><a>...</a></li>
+                          <li class="paginationjs-page paginationjs-last J-paginationjs-page" data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                          <li class="paginationjs-next J-paginationjs-next"  title="Next page"><a href="">»</a></li>
+                        `;
+          }else if(currentPage<=4){
+            pageHtml += `<li class="paginationjs-prev disabled"><a>«</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                         <li class="paginationjs-page J-paginationjs-page" data-num="2" ><a>2</a></li>
+                         <li class="paginationjs-page J-paginationjs-page" data-num="3"><a href="">3</a></li>
+                          <li class="paginationjs-page J-paginationjs-page active " data-num="4"><a href="">4</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="5"><a href="">5</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="6"><a href="">6</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="7"><a href="">7</a></li>
+                          <li class="paginationjs-ellipsis" disabled><a>...</a></li>
+                          <li class="paginationjs-page paginationjs-last J-paginationjs-page" data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                          <li class="paginationjs-next J-paginationjs-next"  title="Next page"><a href="">»</a></li>
+                        `;
+          }else{
+           pageHtml = `<li class="paginationjs-prev "><a>«</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                         <li class="paginationjs-page J-paginationjs-page disabled" ><a>...</a></li>
+                         <li class="paginationjs-page J-paginationjs-page" data-num="${currentPage-2}"><a href="">${currentPage-2}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="${currentPage-1}"><a href="">${currentPage-1}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page active" data-num="${currentPage}"><a href="">${currentPage}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="${currentPage+1}"><a href="">${currentPage+1}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="${currentPage+2}"><a href="">${currentPage+2}</a></li>
+                          <li class="paginationjs-ellipsis disabled"><a>...</a></li>
+                          <li class="paginationjs-page paginationjs-last J-paginationjs-page" data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                          <li class="paginationjs-next J-paginationjs-next"  title="Next page"><a href="">»</a></li>
+                        `;
+          }
+          $(".paginationjs-pages ul").html(pageHtml);
+        }
+
+        if(idx == 4 && $(".paginationjs-pages ul").children("li").eq(idx).data("num")>4){
+          var pageHtml = "";
+          if(currentPage<6){
+
+              pageHtml += `<li class="paginationjs-prev"><a>«</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                         <li class="paginationjs-page J-paginationjs-page" data-num="2" ><a>2</a></li>
+                         <li class="paginationjs-page J-paginationjs-page" data-num="3"><a href="">3</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="4"><a href="">4</a></li>
+                          <li class="paginationjs-page J-paginationjs-page active" data-num="5"><a href="">5</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="6"><a href="">6</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="7"><a href="">7</a></li>
+                          <li class="paginationjs-ellipsis" disabled><a>...</a></li>
+                          <li class="paginationjs-page paginationjs-last J-paginationjs-page" data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                          <li class="paginationjs-next J-paginationjs-next"  title="Next page"><a href="">»</a></li>
+                        `;
+          }else{
+           pageHtml = `<li class="paginationjs-prev "><a>«</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                         <li class="paginationjs-page J-paginationjs-page disabled" ><a>...</a></li>
+                         <li class="paginationjs-page J-paginationjs-page" data-num="${currentPage-2}"><a href="">${currentPage-2}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="${currentPage-1}"><a href="">${currentPage-1}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page active" data-num="${currentPage}"><a href="">${currentPage}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="${currentPage+1}"><a href="">${currentPage+1}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="${currentPage+2}"><a href="">${currentPage+2}</a></li>
+                          <li class="paginationjs-ellipsis disabled"><a>...</a></li>
+                          <li class="paginationjs-page paginationjs-last J-paginationjs-page" data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                          <li class="paginationjs-next J-paginationjs-next" title="Next page"><a href="">»</a></li>
+                        `;
+          }
+          $(".paginationjs-pages ul").html(pageHtml);
+        }
+        
+        if(idx == 6 ){
+          var pageHtml = "";
+          if((totalPage - currentPage)<=4 && (totalPage - currentPage)>3){
+              pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                         <li class="paginationjs-page J-paginationjs-page disabled" ><a>...</a></li>
+                         <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-6}"><a href="">${totalPage-6}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-5}"><a href="">${totalPage-5}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page active" data-num="${totalPage-4}"><a href="">${totalPage-4}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-3}"><a href="">${totalPage-3}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-2}"><a href="">${totalPage-2}</a></li>
+                          <li class="paginationjs-ellipsis" data-num="${totalPage-1}"><a>${totalPage-1}</a></li>
+                          <li class="paginationjs-page paginationjs-last J-paginationjs-page" data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                          <li class="paginationjs-next J-paginationjs-next"  title="Next page"><a href="">»</a></li>
+                        `;
+              
+                        
+          }else if((totalPage - currentPage)<=3 && (totalPage - currentPage)>2){
+              pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                         <li class="paginationjs-page J-paginationjs-page disabled" ><a>...</a></li>
+                         <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-6}"><a href="">${totalPage-6}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-5}"><a href="">${totalPage-5}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-4}"><a href="">${totalPage-4}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page active" data-num="${totalPage-3}"><a href="">${totalPage-3}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-2}"><a href="">${totalPage-2}</a></li>
+                          <li class="paginationjs-ellipsis" data-num="${totalPage-1}"><a>${totalPage-1}</a></li>
+                          <li class="paginationjs-page paginationjs-last J-paginationjs-page" data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                          <li class="paginationjs-next J-paginationjs-next"  title="Next page"><a href="">»</a></li>
+                        `;
+              
+                        
+          }else{
+           pageHtml = `<li class="paginationjs-prev "><a>«</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                         <li class="paginationjs-page J-paginationjs-page disabled" ><a>...</a></li>
+                         <li class="paginationjs-page J-paginationjs-page" data-num="${currentPage-2}"><a href="">${currentPage-2}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="${currentPage-1}"><a href="">${currentPage-1}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page active" data-num="${currentPage}"><a href="">${currentPage}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="${currentPage+1}"><a href="">${currentPage+1}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="${currentPage+2}"><a href="">${currentPage+2}</a></li>
+                          <li class="paginationjs-ellipsis disabled"><a>...</a></li>
+                          <li class="paginationjs-page paginationjs-last J-paginationjs-page" data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                          <li class="paginationjs-next J-paginationjs-next"  title="Next page"><a href="">»</a></li>
+                        `;
+          }
+          
+          $(".paginationjs-pages ul").html(pageHtml);
+        }
+        
+        if(idx == 7 ){
+          var pageHtml = "";
+          if((totalPage - currentPage)<=3 && (totalPage - currentPage)>2){
+            pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                         <li class="paginationjs-page J-paginationjs-page disabled" ><a>...</a></li>
+                         <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-6}"><a href="">${totalPage-6}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-5}"><a href="">${totalPage-5}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-4}"><a href="">${totalPage-4}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page active" data-num="${totalPage-3}"><a href="">${totalPage-3}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-2}"><a href="">${totalPage-2}</a></li>
+                          <li class="paginationjs-ellipsis " data-num="${totalPage-1}"><a>${totalPage-1}</a></li>
+                          <li class="paginationjs-page paginationjs-last J-paginationjs-page" data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                          <li class="paginationjs-next J-paginationjs-next"  title="Next page"><a href="">»</a></li>
+                        `;
+            
+                        
+          }else if((totalPage - currentPage)<=2 && (totalPage - currentPage)>=0){
+            pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                         <li class="paginationjs-page J-paginationjs-page disabled" ><a>...</a></li>
+                         <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-6}"><a href="">${totalPage-6}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-5}"><a href="">${totalPage-5}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-4}"><a href="">${totalPage-4}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-3}"><a href="">${totalPage-3}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page active" data-num="${totalPage-2}"><a href="">${totalPage-2}</a></li>
+                          <li class="paginationjs-ellipsis " data-num="${totalPage-1}"><a>${totalPage-1}</a></li>
+                          <li class="paginationjs-page paginationjs-last J-paginationjs-page" data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                          <li class="paginationjs-next J-paginationjs-next"  title="Next page"><a href="">»</a></li>
+                        `;
+          }else{
+           pageHtml = `<li class="paginationjs-prev "><a>«</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                         <li class="paginationjs-page J-paginationjs-page disabled"><a>...</a></li>
+                         <li class="paginationjs-page J-paginationjs-page" data-num="${currentPage-2}"><a href="">${currentPage-2}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="${currentPage-1}"><a href="">${currentPage-1}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page active" data-num="${currentPage}"><a href="">${currentPage}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="${currentPage+1}"><a href="">${currentPage+1}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="${currentPage+2}"><a href="">${currentPage+2}</a></li>
+                          <li class="paginationjs-ellipsis disabled"><a>...</a></li>
+                          <li class="paginationjs-page paginationjs-last J-paginationjs-page" data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                          <li class="paginationjs-next J-paginationjs-next"  title="Next page"><a href="">»</a></li>
+                        `;
+          }
+          $(".paginationjs-pages ul").html(pageHtml);
+        }
+        
+        if(idx == 9){
+          var pageHtml = ""; 
+                    pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                         <li class="paginationjs-page J-paginationjs-page disabled" ><a>...</a></li>
+                         <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-6}"><a href="">${totalPage-6}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-5}"><a href="">${totalPage-5}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-4}"><a href="">${totalPage-4}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-3}"><a href="">${totalPage-3}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-2}"><a href="">${totalPage-2}</a></li>
+                          <li class="paginationjs-ellipsis " data-num="${totalPage-1}"><a>${totalPage-1}</a></li>
+                          <li class="paginationjs-page paginationjs-last J-paginationjs-page active" data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                          <li class="paginationjs-next J-paginationjs-next disabled"  title="Next page"><a href="">»</a></li>
+                        `;
+          $(".paginationjs-pages ul").html(pageHtml);
+        }
+    }
+    var x = $(".paginationjs-pages ul").find(".active").data("num");
+    // 上一页下一页按钮
+    if(currentPage>1 || x>1){
+        $(".paginationjs-pages ul").children(".paginationjs-prev").removeClass("disabled");  
+    }else{
+        $(".paginationjs-pages ul").children(".paginationjs-prev").addClass("disabled");
+    }
+
+    if(currentPage == totalPage || x == totalPage){
+        $(".paginationjs-pages ul").children(".paginationjs-next").addClass("disabled");  
+    }else{
+        $(".paginationjs-pages ul").children(".paginationjs-next").removeClass("disabled");  
+    }
+
+    if(totalPage<10 && totalPage > 1){
+      if($(this).parent().hasClass("paginationjs-prev") && !($(this).parent().hasClass("disabled"))) {
+          $(".paginationjs-pages ul").children().eq(x).prev()
+                                    .addClass("active")
+                                    .siblings(".active")
+                                    .removeClass("active");
+          if((x-1) == 1){
+            x = 1;
+            $(".paginationjs-pages ul").children(".paginationjs-prev").addClass("disabled");
+          }else{
+            x -= 1;
+          }
+          
+      }
+      if($(this).parent().hasClass("paginationjs-next") && !($(this).parent().hasClass("disabled"))){
+          $(".paginationjs-pages ul").children().eq((x<totalPage ? x+1 : totalPage)) 
+                                    .addClass("active")
+                                    .siblings(".active")
+                                    .removeClass("active");
+          if((x+1)<totalPage){
+             x= x+1
+          }else {
+            x = totalPage;
+            $(".paginationjs-pages ul").children(".paginationjs-next").addClass("disabled");
+
+          }
+      }
+    }else if(totalPage>=10){
+
+      if(idx == 0){
+            if(!($(this).parent().hasClass("disabled"))){
+             x--;
+              var pageHtml = "";
+              if(x == totalPage){
+                  pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                    <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                   <li class="paginationjs-page J-paginationjs-page disabled" ><a>...</a></li>
+                   <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-6}"><a href="">${totalPage-6}</a></li>
+                    <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-5}"><a href="">${totalPage-5}</a></li>
+                    <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-4}"><a href="">${totalPage-4}</a></li>
+                    <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-3}"><a href="">${totalPage-3}</a></li>
+                    <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-2}"><a href="">${totalPage-2}</a></li>
+                    <li class="paginationjs-ellipsis active" data-num="${totalPage-1}"><a>${totalPage-1}</a></li>
+                    <li class="paginationjs-page paginationjs-last J-paginationjs-page " data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                    <li class="paginationjs-next J-paginationjs-next"  title="Next page"><a href="">»</a></li>
+                  `;
+              }else if(x == totalPage -1){
+                pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                    <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                   <li class="paginationjs-page J-paginationjs-page disabled" ><a>...</a></li>
+                   <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-6}"><a href="">${totalPage-6}</a></li>
+                    <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-5}"><a href="">${totalPage-5}</a></li>
+                    <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-4}"><a href="">${totalPage-4}</a></li>
+                    <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-3}"><a href="">${totalPage-3}</a></li>
+                    <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-2}"><a href="">${totalPage-2}</a></li>
+                    <li class="paginationjs-ellipsis active" data-num="${totalPage-1}"><a>${totalPage-1}</a></li>
+                    <li class="paginationjs-page paginationjs-last J-paginationjs-page " data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                    <li class="paginationjs-next J-paginationjs-next"  title="Next page"><a href="">»</a></li>
+                  `;
+              }else if(x == totalPage -2){
+                pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                    <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                   <li class="paginationjs-page J-paginationjs-page disabled" ><a>...</a></li>
+                   <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-6}"><a href="">${totalPage-6}</a></li>
+                    <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-5}"><a href="">${totalPage-5}</a></li>
+                    <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-4}"><a href="">${totalPage-4}</a></li>
+                    <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-3}"><a href="">${totalPage-3}</a></li>
+                    <li class="paginationjs-page J-paginationjs-page active" data-num="${totalPage-2}"><a href="">${totalPage-2}</a></li>
+                    <li class="paginationjs-ellipsis " data-num="${totalPage-1}"><a>${totalPage-1}</a></li>
+                    <li class="paginationjs-page paginationjs-last J-paginationjs-page " data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                    <li class="paginationjs-next J-paginationjs-next"  title="Next page"><a href="">»</a></li>
+                  `;
+              }else if(x == totalPage -3){
+                pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                    <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                   <li class="paginationjs-page J-paginationjs-page disabled" ><a>...</a></li>
+                   <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-6}"><a href="">${totalPage-6}</a></li>
+                    <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-5}"><a href="">${totalPage-5}</a></li>
+                    <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-4}"><a href="">${totalPage-4}</a></li>
+                    <li class="paginationjs-page J-paginationjs-page active" data-num="${totalPage-3}"><a href="">${totalPage-3}</a></li>
+                    <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-2}"><a href="">${totalPage-2}</a></li>
+                    <li class="paginationjs-ellipsis " data-num="${totalPage-1}"><a>${totalPage-1}</a></li>
+                    <li class="paginationjs-page paginationjs-last J-paginationjs-page " data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                    <li class="paginationjs-next J-paginationjs-next" title="Next page"><a href="">»</a></li>
+                  `;
+              }else if(x == totalPage -4){
+                pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                    <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                   <li class="paginationjs-page J-paginationjs-page disabled" ><a>...</a></li>
+                   <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-6}"><a href="">${totalPage-6}</a></li>
+                    <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-5}"><a href="">${totalPage-5}</a></li>
+                    <li class="paginationjs-page J-paginationjs-page active" data-num="${totalPage-4}"><a href="">${totalPage-4}</a></li>
+                    <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-3}"><a href="">${totalPage-3}</a></li>
+                    <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-2}"><a href="">${totalPage-2}</a></li>
+                    <li class="paginationjs-ellipsis " data-num="${totalPage-1}"><a>${totalPage-1}</a></li>
+                    <li class="paginationjs-page paginationjs-last J-paginationjs-page " data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                    <li class="paginationjs-next J-paginationjs-next" title="Next page"><a href="">»</a></li>
+                  `;
+              }else if(x == 5){
+                pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                            <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                           <li class="paginationjs-page J-paginationjs-page" data-num="2" ><a>2</a></li>
+                           <li class="paginationjs-page J-paginationjs-page" data-num="3"><a href="">3</a></li>
+                            <li class="paginationjs-page J-paginationjs-page " data-num="4"><a href="">4</a></li>
+                            <li class="paginationjs-page J-paginationjs-page active" data-num="5"><a href="">5</a></li>
+                            <li class="paginationjs-page J-paginationjs-page " data-num="6"><a href="">6</a></li>
+                            <li class="paginationjs-page J-paginationjs-page " data-num="7"><a href="">7</a></li>
+                            <li class="paginationjs-ellipsis" disabled><a>...</a></li>
+                            <li class="paginationjs-page paginationjs-last J-paginationjs-page" data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                            <li class="paginationjs-next J-paginationjs-next"  title="Next page"><a href="">»</a></li>
+                          `;
+              }else if(x == 4){
+                 pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                            <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                           <li class="paginationjs-page J-paginationjs-page" data-num="2" ><a>2</a></li>
+                           <li class="paginationjs-page J-paginationjs-page " data-num="3"><a href="">3</a></li>
+                            <li class="paginationjs-page J-paginationjs-page active" data-num="4"><a href="">4</a></li>
+                            <li class="paginationjs-page J-paginationjs-page " data-num="5"><a href="">5</a></li>
+                            <li class="paginationjs-page J-paginationjs-page " data-num="6"><a href="">6</a></li>
+                            <li class="paginationjs-page J-paginationjs-page " data-num="7"><a href="">7</a></li>
+                            <li class="paginationjs-ellipsis" disabled><a>...</a></li>
+                            <li class="paginationjs-page paginationjs-last J-paginationjs-page" data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                            <li class="paginationjs-next J-paginationjs-next"  title="Next page"><a href="">»</a></li>
+                          `;
+              }else if(x == 3){
+                 pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                            <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                           <li class="paginationjs-page J-paginationjs-page " data-num="2" ><a>2</a></li>
+                           <li class="paginationjs-page J-paginationjs-page active" data-num="3"><a href="">3</a></li>
+                            <li class="paginationjs-page J-paginationjs-page " data-num="4"><a href="">4</a></li>
+                            <li class="paginationjs-page J-paginationjs-page " data-num="5"><a href="">5</a></li>
+                            <li class="paginationjs-page J-paginationjs-page " data-num="6"><a href="">6</a></li>
+                            <li class="paginationjs-page J-paginationjs-page " data-num="7"><a href="">7</a></li>
+                            <li class="paginationjs-ellipsis" disabled><a>...</a></li>
+                            <li class="paginationjs-page paginationjs-last J-paginationjs-page" data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                            <li class="paginationjs-next J-paginationjs-next"  title="Next page"><a href="">»</a></li>
+                          `;
+              }else if(x == 2){
+                 pageHtml += `<li class="paginationjs-prev"><a>«</a></li>
+                            <li class="paginationjs-page J-paginationjs-page " data-num="1"><a>1</a></li>  
+                           <li class="paginationjs-page J-paginationjs-page active" data-num="2" ><a>2</a></li>
+                           <li class="paginationjs-page J-paginationjs-page " data-num="3"><a href="">3</a></li>
+                            <li class="paginationjs-page J-paginationjs-page " data-num="4"><a href="">4</a></li>
+                            <li class="paginationjs-page J-paginationjs-page " data-num="5"><a href="">5</a></li>
+                            <li class="paginationjs-page J-paginationjs-page " data-num="6"><a href="">6</a></li>
+                            <li class="paginationjs-page J-paginationjs-page " data-num="7"><a href="">7</a></li>
+                            <li class="paginationjs-ellipsis" disabled><a>...</a></li>
+                            <li class="paginationjs-page paginationjs-last J-paginationjs-page" data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                            <li class="paginationjs-next J-paginationjs-next"  title="Next page"><a href="">»</a></li>
+                          `;
+              }else if(x == 1){
+                 pageHtml += `<li class="paginationjs-prev disabled"><a>«</a></li>
+                            <li class="paginationjs-page J-paginationjs-page active" data-num="1"><a>1</a></li>  
+                           <li class="paginationjs-page J-paginationjs-page " data-num="2" ><a>2</a></li>
+                           <li class="paginationjs-page J-paginationjs-page " data-num="3"><a href="">3</a></li>
+                            <li class="paginationjs-page J-paginationjs-page " data-num="4"><a href="">4</a></li>
+                            <li class="paginationjs-page J-paginationjs-page " data-num="5"><a href="">5</a></li>
+                            <li class="paginationjs-page J-paginationjs-page " data-num="6"><a href="">6</a></li>
+                            <li class="paginationjs-page J-paginationjs-page " data-num="7"><a href="">7</a></li>
+                            <li class="paginationjs-ellipsis" disabled><a>...</a></li>
+                            <li class="paginationjs-page paginationjs-last J-paginationjs-page" data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                            <li class="paginationjs-next J-paginationjs-next"  title="Next page"><a href="">»</a></li>
+                          `;
+              }else{
+               pageHtml = `<li class="paginationjs-prev"><a>«</a></li>
+                              <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                             <li class="paginationjs-page J-paginationjs-page disabled" ><a>...</a></li>
+                             <li class="paginationjs-page J-paginationjs-page" data-num="${x-2}"><a href="">${x-2}</a></li>
+                              <li class="paginationjs-page J-paginationjs-page active" data-num="${x-1}"><a href="">${x-1}</a></li>
+                              <li class="paginationjs-page J-paginationjs-page " data-num="${x}"><a href="">${x}</a></li>
+                              <li class="paginationjs-page J-paginationjs-page" data-num="${x+1}"><a href="">${x+1}</a></li>
+                              <li class="paginationjs-page J-paginationjs-page" data-num="${x+2}"><a href="">${x+2}</a></li>
+                              <li class="paginationjs-ellipsis disabled"><a>...</a></li>
+                              <li class="paginationjs-page paginationjs-last J-paginationjs-page" data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                              <li class="paginationjs-next J-paginationjs-next"  title="Next page"><a href="">»</a></li>
+                            `;
+              }
+               
+              $(".paginationjs-pages ul").html(pageHtml);
+
+            }
+            
+      }
+
+      if(idx == 10){
+          if(!($(this).parent().hasClass("disabled"))){
+            x++;
+            var pageHtml = "";
+            if(x == 2){
+              pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="1"><a>1</a></li>  
+                         <li class="paginationjs-page J-paginationjs-page active" data-num="2" ><a>2</a></li>
+                         <li class="paginationjs-page J-paginationjs-page" data-num="3"><a href="">3</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="4"><a href="">4</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="5"><a href="">5</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="6"><a href="">6</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="7"><a href="">7</a></li>
+                          <li class="paginationjs-ellipsis" disabled><a>...</a></li>
+                          <li class="paginationjs-page paginationjs-last J-paginationjs-page" data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                          <li class="paginationjs-next J-paginationjs-next"  title="Next page"><a href="">»</a></li>
+                        `;
+            }else if(x == 3){
+               pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                         <li class="paginationjs-page J-paginationjs-page " data-num="2" ><a>2</a></li>
+                         <li class="paginationjs-page J-paginationjs-page active" data-num="3"><a href="">3</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="4"><a href="">4</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="5"><a href="">5</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="6"><a href="">6</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="7"><a href="">7</a></li>
+                          <li class="paginationjs-ellipsis" disabled><a>...</a></li>
+                          <li class="paginationjs-page paginationjs-last J-paginationjs-page" data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                          <li class="paginationjs-next J-paginationjs-next" title="Next page"><a href="">»</a></li>
+                        `;
+            }else if(x == 4){
+               pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                         <li class="paginationjs-page J-paginationjs-page " data-num="2" ><a>2</a></li>
+                         <li class="paginationjs-page J-paginationjs-page " data-num="3"><a href="">3</a></li>
+                          <li class="paginationjs-page J-paginationjs-page active" data-num="4"><a href="">4</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="5"><a href="">5</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="6"><a href="">6</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="7"><a href="">7</a></li>
+                          <li class="paginationjs-ellipsis" disabled><a>...</a></li>
+                          <li class="paginationjs-page paginationjs-last J-paginationjs-page" data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                          <li class="paginationjs-next J-paginationjs-next"  title="Next page"><a href="">»</a></li>
+                        `;
+            }else if(x ==(totalPage -4)){
+               pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                         <li class="paginationjs-page J-paginationjs-page " disabled ><a>...</a></li>
+                         <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-6}"><a href="">${totalPage-6}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-5}"><a href="">${totalPage-5}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page active" data-num="${totalPage-4}"><a href="">${totalPage-4}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-3}"><a href="">${totalPage-3}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-2}"><a href="">${totalPage-2}</a></li>
+                          <li class="paginationjs-ellipsis" disabled><a>...</a></li>
+                          <li class="paginationjs-page paginationjs-last J-paginationjs-page" data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                          <li class="paginationjs-next J-paginationjs-next"  title="Next page"><a href="">»</a></li>
+                        `;
+            }else if(x ==(totalPage -3)){
+               pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                         <li class="paginationjs-page J-paginationjs-page " disabled ><a>...</a></li>
+                         <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-6}"><a href="">${totalPage-6}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-5}"><a href="">${totalPage-5}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-4}"><a href="">${totalPage-4}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page active" data-num="${totalPage-3}"><a href="">${totalPage-3}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-2}"><a href="">${totalPage-2}</a></li>
+                          <li class="paginationjs-ellipsis" data-num="${totalPage-1}"><a>${totalPage-1}</a></li>
+                          <li class="paginationjs-page paginationjs-last J-paginationjs-page" data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                          <li class="paginationjs-next J-paginationjs-next"  title="Next page"><a href="">»</a></li>
+                        `;
+            }else if(x ==(totalPage -2)){
+               pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                         <li class="paginationjs-page J-paginationjs-page " disabled ><a>...</a></li>
+                         <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-6}"><a href="">${totalPage-6}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-5}"><a href="">${totalPage-5}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-4}"><a href="">${totalPage-4}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-3}"><a href="">${totalPage-3}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page active" data-num="${totalPage-2}"><a href="">${totalPage-2}</a></li>
+                          <li class="paginationjs-ellipsis" data-num="${totalPage-1}"><a>${totalPage-1}</a></li>
+                          <li class="paginationjs-page paginationjs-last J-paginationjs-page" data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                          <li class="paginationjs-next J-paginationjs-next"  title="Next page"><a href="">»</a></li>
+                        `;
+            }else if(x ==(totalPage -1)){
+               pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                         <li class="paginationjs-page J-paginationjs-page " disabled ><a>...</a></li>
+                         <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-6}"><a href="">${totalPage-6}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-5}"><a href="">${totalPage-5}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-4}"><a href="">${totalPage-4}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-3}"><a href="">${totalPage-3}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-2}"><a href="">${totalPage-2}</a></li>
+                          <li class="paginationjs-ellipsis active" data-num="${totalPage-1}"><a>${totalPage-1}</a></li>
+                          <li class="paginationjs-page paginationjs-last J-paginationjs-page" data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                          <li class="paginationjs-next J-paginationjs-next"  title="Next page"><a href="">»</a></li>
+                        `;
+            }else if(x ==totalPage){
+               pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                          <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                         <li class="paginationjs-page J-paginationjs-page " disabled ><a>...</a></li>
+                         <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-6}"><a href="">${totalPage-6}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-5}"><a href="">${totalPage-5}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-4}"><a href="">${totalPage-4}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-3}"><a href="">${totalPage-3}</a></li>
+                          <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-2}"><a href="">${totalPage-2}</a></li>
+                          <li class="paginationjs-ellipsis " data-num="${totalPage-1}"><a>${totalPage-1}</a></li>
+                          <li class="paginationjs-page paginationjs-last J-paginationjs-page active" data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                          <li class="paginationjs-next J-paginationjs-next disabled"  title="Next page"><a href="">»</a></li>
+                        `;
+            }else if(x<totalPage){
+             pageHtml = `<li class="paginationjs-prev "><a>«</a></li>
+                            <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                           <li class="paginationjs-page J-paginationjs-page disabled" ><a>...</a></li>
+                           <li class="paginationjs-page J-paginationjs-page" data-num="${x-2}"><a href="">${x-2}</a></li>
+                            <li class="paginationjs-page J-paginationjs-page" data-num="${x-1}"><a href="">${x-1}</a></li>
+                            <li class="paginationjs-page J-paginationjs-page active" data-num="${x}"><a href="">${x}</a></li>
+                            <li class="paginationjs-page J-paginationjs-page" data-num="${x+1}"><a href="">${x+1}</a></li>
+                            <li class="paginationjs-page J-paginationjs-page" data-num="${x+2}"><a href="">${x+2}</a></li>
+                            <li class="paginationjs-ellipsis disabled"><a>...</a></li>
+                            <li class="paginationjs-page paginationjs-last J-paginationjs-page" data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                            <li class="paginationjs-next J-paginationjs-next"  title="Next page"><a href="">»</a></li>
+                          `;
+            }
+            $(".paginationjs-pages ul").html(pageHtml);
+
+          }
+          
+      }
+    }
+    
+
+    console.log("currentPage ",currentPage);
+    console.log("x ",x);
+    console.log("idx ",idx);
+    console.log("totalPage ",totalPage);
+
+    /*$.ajax({
+        url:"special_district_goods.php?id=1&act=nextpage",
+        type:"GET",
+        dataType:"json",
+        data:{"page":currentPage || x },
+        success:function(data){
+          console.log(data);
+          var record_count = data.record_count; // 总的数据记录
+          var size = data.size; //每页显示的数量
+          var page = Math.ceil(record_count/size); //总页数
+          var goods = data.goods; //对象数组
+          if(record_count <=0) {
+            alert("暂无商品记录，你可以去别的地方逛一逛！");
+          }
+          var goodsHtml = "";
+          $.each(goods,function(i,list){ //list 为当前i的一个对象
+              goodsHtml += `
+                    <div class="item" id="li_${list.goods_id}">
+                      <div class="item-inner">
+                        <a class="add-cart" href="javascript:addToCart(${list.goods_id})" title="加入购物车"></a>
+                        <a href="${list.url}" title='${list.goods_name}' target="_blank" class="item-img">
+                        <img data-original="${list.goods_thumb}" src="themes/68ecshopcom_360buy/images/loading.gif"  class="pic_img_${list.goods_id}" height="160" width="160">
+                        </a>
+                        <p class="item-name"><a href="${list.url}" title="${list.goods_name}" target="_blank">${list.goods_name}</a></p>
+                        <div class="item-price">
+                        <span class="sale-price main-color">`
+              if(list.promote_price > 0){
+                goodsHtml += `
+                    ${list.promote_price}</span>
+                        </div>
+                      </div>
+                    </div>
+                `;
+              }else{
+                goodsHtml += `
+                  ${list.shop_price}</span>
+                        </div>
+                      </div>
+                    </div>
+                `;
+              }
+          });
+*/
+          /*$(".floor-content").html(goodsHtml);*/
+          $(".J-paginationjs-go-pagenumber").val(currentPage || x);
+        //}
+     // });
+
+  });
+  //点击 go 跳转到相对应的页面
+  $(".paginationjs-go-button").click(function(){
+      var toPage =parseInt($(".J-paginationjs-go-pagenumber").val());
+      var totalPage = $(".paginationjs-pages ul").find(".paginationjs-last").data("num");
+
+      if(toPage > totalPage){
+        $(".J-paginationjs-go-pagenumber").val("");
+        alert("跳转的页码超过了总页码数");
+        return; 
+      };
+
+      var pageHtml = "";
+      var lastPage = totalPage - toPage;
+      var firstPage = toPage - 1;
+      console.log(lastPage,firstPage);
+      if(totalPage>=10){
+        if(lastPage<5 && firstPage > 5){
+            if(lastPage == 4){
+              pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                        <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                       <li class="paginationjs-page J-paginationjs-page disabled" ><a>...</a></li>
+                       <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-6}"><a href="">${totalPage-6}</a></li>
+                        <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-5}"><a href="">${totalPage-5}</a></li>
+                        <li class="paginationjs-page J-paginationjs-page active" data-num="${totalPage-4}"><a href="">${totalPage-4}</a></li>
+                        <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-3}"><a href="">${totalPage-3}</a></li>
+                        <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-2}"><a href="">${totalPage-2}</a></li>
+                        <li class="paginationjs-ellipsis " data-num="${totalPage-1}"><a>${totalPage-1}</a></li>
+                        <li class="paginationjs-page paginationjs-last J-paginationjs-page " data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                        <li class="paginationjs-next J-paginationjs-next disabled"  title="Next page"><a href="">»</a></li>
+                      `;
+            }
+            if(lastPage == 3){
+              pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                        <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                       <li class="paginationjs-page J-paginationjs-page disabled" ><a>...</a></li>
+                       <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-6}"><a href="">${totalPage-6}</a></li>
+                        <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-5}"><a href="">${totalPage-5}</a></li>
+                        <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-4}"><a href="">${totalPage-4}</a></li>
+                        <li class="paginationjs-page J-paginationjs-page active" data-num="${totalPage-3}"><a href="">${totalPage-3}</a></li>
+                        <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-2}"><a href="">${totalPage-2}</a></li>
+                        <li class="paginationjs-ellipsis " data-num="${totalPage-1}"><a>${totalPage-1}</a></li>
+                        <li class="paginationjs-page paginationjs-last J-paginationjs-page " data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                        <li class="paginationjs-next J-paginationjs-next disabled"  title="Next page"><a href="">»</a></li>
+                      `;
+            }
+            if(lastPage == 2){
+              pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                        <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                       <li class="paginationjs-page J-paginationjs-page disabled" ><a>...</a></li>
+                       <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-6}"><a href="">${totalPage-6}</a></li>
+                        <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-5}"><a href="">${totalPage-5}</a></li>
+                        <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-4}"><a href="">${totalPage-4}</a></li>
+                        <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-3}"><a href="">${totalPage-3}</a></li>
+                        <li class="paginationjs-page J-paginationjs-page active" data-num="${totalPage-2}"><a href="">${totalPage-2}</a></li>
+                        <li class="paginationjs-ellipsis " data-num="${totalPage-1}"><a>${totalPage-1}</a></li>
+                        <li class="paginationjs-page paginationjs-last J-paginationjs-page " data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                        <li class="paginationjs-next J-paginationjs-next disabled"  title="Next page"><a href="">»</a></li>
+                      `;
+            }
+            if(lastPage == 1){
+              pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                        <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                       <li class="paginationjs-page J-paginationjs-page disabled" ><a>...</a></li>
+                       <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-6}"><a href="">${totalPage-6}</a></li>
+                        <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-5}"><a href="">${totalPage-5}</a></li>
+                        <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-4}"><a href="">${totalPage-4}</a></li>
+                        <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-3}"><a href="">${totalPage-3}</a></li>
+                        <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-2}"><a href="">${totalPage-2}</a></li>
+                        <li class="paginationjs-ellipsis active" data-num="${totalPage-1}"><a>${totalPage-1}</a></li>
+                        <li class="paginationjs-page paginationjs-last J-paginationjs-page " data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                        <li class="paginationjs-next J-paginationjs-next disabled"  title="Next page"><a href="">»</a></li>
+                      `;
+            }
+            if(lastPage == 0){
+              pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                        <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                       <li class="paginationjs-page J-paginationjs-page disabled" ><a>...</a></li>
+                       <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-6}"><a href="">${totalPage-6}</a></li>
+                        <li class="paginationjs-page J-paginationjs-page" data-num="${totalPage-5}"><a href="">${totalPage-5}</a></li>
+                        <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-4}"><a href="">${totalPage-4}</a></li>
+                        <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-3}"><a href="">${totalPage-3}</a></li>
+                        <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-2}"><a href="">${totalPage-2}</a></li>
+                        <li class="paginationjs-ellipsis " data-num="${totalPage-1}"><a>${totalPage-1}</a></li>
+                        <li class="paginationjs-page paginationjs-last J-paginationjs-page active" data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                        <li class="paginationjs-next J-paginationjs-next disabled"  title="Next page"><a href="">»</a></li>
+                      `;
+            }
+        }else
+        if(firstPage < 5 && lastPage >5){
+            if(firstPage == 4){
+              pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                        <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                       <li class="paginationjs-page J-paginationjs-page " data-num="2"><a>2</a></li>
+                       <li class="paginationjs-page J-paginationjs-page" data-num="3"><a href="">3</a></li>
+                        <li class="paginationjs-page J-paginationjs-page" data-num="4"><a href="">4</a></li>
+                        <li class="paginationjs-page J-paginationjs-page active" data-num="5"><a href="">5</a></li>
+                        <li class="paginationjs-page J-paginationjs-page" data-num="6"><a href="">6</a></li>
+                        <li class="paginationjs-page J-paginationjs-page " data-num="7"><a href="">7</a></li>
+                        <li class="paginationjs-ellipsis disabled" ><a>...</a></li>
+                        <li class="paginationjs-page paginationjs-last J-paginationjs-page " data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                        <li class="paginationjs-next J-paginationjs-next disabled"  title="Next page"><a href="">»</a></li>
+                      `;
+            }
+            if(firstPage == 3){
+              pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                        <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                       <li class="paginationjs-page J-paginationjs-page " data-num="2"><a>2</a></li>
+                       <li class="paginationjs-page J-paginationjs-page" data-num="3"><a href="">3</a></li>
+                        <li class="paginationjs-page J-paginationjs-page active" data-num="4"><a href="">4</a></li>
+                        <li class="paginationjs-page J-paginationjs-page " data-num="5"><a href="">5</a></li>
+                        <li class="paginationjs-page J-paginationjs-page" data-num="6"><a href="">6</a></li>
+                        <li class="paginationjs-page J-paginationjs-page " data-num="7"><a href="">7</a></li>
+                        <li class="paginationjs-ellipsis disabled" ><a>...</a></li>
+                        <li class="paginationjs-page paginationjs-last J-paginationjs-page " data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                        <li class="paginationjs-next J-paginationjs-next disabled"  title="Next page"><a href="">»</a></li>
+                      `;
+            }
+            if(firstPage == 2){
+              pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                        <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                       <li class="paginationjs-page J-paginationjs-page " data-num="2"><a>2</a></li>
+                       <li class="paginationjs-page J-paginationjs-page active" data-num="3"><a href="">3</a></li>
+                        <li class="paginationjs-page J-paginationjs-page" data-num="4"><a href="">4</a></li>
+                        <li class="paginationjs-page J-paginationjs-page " data-num="5"><a href="">5</a></li>
+                        <li class="paginationjs-page J-paginationjs-page" data-num="6"><a href="">6</a></li>
+                        <li class="paginationjs-page J-paginationjs-page " data-num="7"><a href="">7</a></li>
+                        <li class="paginationjs-ellipsis disabled" ><a>...</a></li>
+                        <li class="paginationjs-page paginationjs-last J-paginationjs-page " data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                        <li class="paginationjs-next J-paginationjs-next disabled"  title="Next page"><a href="">»</a></li>
+                      `;
+            }
+            if(firstPage == 1){
+              pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                        <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                       <li class="paginationjs-page J-paginationjs-page active" data-num="2"><a>2</a></li>
+                       <li class="paginationjs-page J-paginationjs-page" data-num="3"><a href="">3</a></li>
+                        <li class="paginationjs-page J-paginationjs-page" data-num="4"><a href="">4</a></li>
+                        <li class="paginationjs-page J-paginationjs-page " data-num="5"><a href="">5</a></li>
+                        <li class="paginationjs-page J-paginationjs-page" data-num="6"><a href="">6</a></li>
+                        <li class="paginationjs-page J-paginationjs-page " data-num="7"><a href="">7</a></li>
+                        <li class="paginationjs-ellipsis disabled" ><a>...</a></li>
+                        <li class="paginationjs-page paginationjs-last J-paginationjs-page " data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                        <li class="paginationjs-next J-paginationjs-next disabled"  title="Next page"><a href="">»</a></li>
+                      `;
+            }
+            if(firstPage == 0){
+              pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                        <li class="paginationjs-page J-paginationjs-page active" data-num="1"><a>1</a></li>  
+                       <li class="paginationjs-page J-paginationjs-page " data-num="2"><a>2</a></li>
+                       <li class="paginationjs-page J-paginationjs-page" data-num="3"><a href="">3</a></li>
+                        <li class="paginationjs-page J-paginationjs-page" data-num="4"><a href="">4</a></li>
+                        <li class="paginationjs-page J-paginationjs-page " data-num="5"><a href="">5</a></li>
+                        <li class="paginationjs-page J-paginationjs-page" data-num="6"><a href="">6</a></li>
+                        <li class="paginationjs-page J-paginationjs-page " data-num="7"><a href="">7</a></li>
+                        <li class="paginationjs-ellipsis disabled" ><a>...</a></li>
+                        <li class="paginationjs-page paginationjs-last J-paginationjs-page " data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                        <li class="paginationjs-next J-paginationjs-next disabled"  title="Next page"><a href="">»</a></li>
+                      `;
+            }
+        }else{
+          pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+                        <li class="paginationjs-page J-paginationjs-page" data-num="1"><a>1</a></li>  
+                       <li class="paginationjs-page J-paginationjs-page " disabled><a>...</a></li>
+                       <li class="paginationjs-page J-paginationjs-page" data-num="${toPage-2}"><a href="">${toPage-2}</a></li>
+                        <li class="paginationjs-page J-paginationjs-page" data-num="${toPage-1}"><a href="">${toPage-1}</a></li>
+                        <li class="paginationjs-page J-paginationjs-page active" data-num="${toPage}"><a href="">${toPage}</a></li>
+                        <li class="paginationjs-page J-paginationjs-page" data-num="${toPage+1}"><a href="">${toPage+1}</a></li>
+                        <li class="paginationjs-page J-paginationjs-page " data-num="${toPage+2}"><a href="">${toPage+2}</a></li>
+                        <li class="paginationjs-ellipsis disabled" ><a>...</a></li>
+                        <li class="paginationjs-page paginationjs-last J-paginationjs-page " data-num="${totalPage}"><a href="">${totalPage}</a></li>
+                        <li class="paginationjs-next J-paginationjs-next disabled"  title="Next page"><a href="">»</a></li>
+                      `;
+        }
+        $(".paginationjs-pages ul").html(pageHtml);
+      }else if(totalPage>1 && totalPage<10){
+        $(".paginationjs-pages ul").children().eq(toPage)
+                                    .addClass("active")
+                                    .siblings(".active")
+                                    .removeClass("active");
+      }
+
+/*      $.ajax({
+        url:"special_district_goods.php?id=1&act=nextpage",
+        type:"GET",
+        dataType:"json",
+        data:{"page":toPage},
+        success:function(data){
+          console.log(data);
+          var record_count = data.record_count; // 总的数据记录
+          var size = data.size; //每页显示的数量
+          var page = Math.ceil(record_count/size); //总页数
+          var goods = data.goods; //对象数组
+          if(record_count <=0) {
+            alert("暂无商品记录，你可以去别的地方逛一逛！");
+          }
+          var goodsHtml = "";
+          $.each(goods,function(i,list){ //list 为当前i的一个对象
+              goodsHtml += `
+                    <div class="item" id="li_${list.goods_id}">
+                      <div class="item-inner">
+                        <a class="add-cart" href="javascript:addToCart(${list.goods_id})" title="加入购物车"></a>
+                        <a href="${list.url}" title='${list.goods_name}' target="_blank" class="item-img">
+                        <img data-original="${list.goods_thumb}" src="themes/68ecshopcom_360buy/images/loading.gif"  class="pic_img_${list.goods_id}" height="160" width="160">
+                        </a>
+                        <p class="item-name"><a href="${list.url}" title="${list.goods_name}" target="_blank">${list.goods_name}</a></p>
+                        <div class="item-price">
+                        <span class="sale-price main-color">`
+              if(list.promote_price > 0){
+                goodsHtml += `
+                    ${list.promote_price}</span>
+                        </div>
+                      </div>
+                    </div>
+                `;
+              }else{
+                goodsHtml += `
+                  ${list.shop_price}</span>
+                        </div>
+                      </div>
+                    </div>
+                `;
+              }
+          });*/
+          
+          //$(".floor-content").html(goodsHtml);
+          
+          //$(".J-paginationjs-go-pagenumber").val(currentPage || x);
+        //}
+      //});
+  });
+</script>   
+  </body>
+  </html>  
