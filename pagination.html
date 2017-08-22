@@ -78,7 +78,7 @@
               }
           });*/
 
-          var page = 15; //总页数
+          var page = 25; //总页数
           var pageHtml = `<li class="paginationjs-prev disabled"><a>«</a></li>
                           <li class="paginationjs-page J-paginationjs-page active" data-num="1"><a>1</a></li>  
                           `;
@@ -775,7 +775,7 @@
                         <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-2}"><a href="">${totalPage-2}</a></li>
                         <li class="paginationjs-ellipsis " data-num="${totalPage-1}"><a>${totalPage-1}</a></li>
                         <li class="paginationjs-page paginationjs-last J-paginationjs-page " data-num="${totalPage}"><a href="">${totalPage}</a></li>
-                        <li class="paginationjs-next J-paginationjs-next disabled"  title="Next page"><a href="">»</a></li>
+                        <li class="paginationjs-next J-paginationjs-next "  title="Next page"><a href="">»</a></li>
                       `;
             }
             if(lastPage == 3){
@@ -789,7 +789,7 @@
                         <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-2}"><a href="">${totalPage-2}</a></li>
                         <li class="paginationjs-ellipsis " data-num="${totalPage-1}"><a>${totalPage-1}</a></li>
                         <li class="paginationjs-page paginationjs-last J-paginationjs-page " data-num="${totalPage}"><a href="">${totalPage}</a></li>
-                        <li class="paginationjs-next J-paginationjs-next disabled"  title="Next page"><a href="">»</a></li>
+                        <li class="paginationjs-next J-paginationjs-next"  title="Next page"><a href="">»</a></li>
                       `;
             }
             if(lastPage == 2){
@@ -803,7 +803,7 @@
                         <li class="paginationjs-page J-paginationjs-page active" data-num="${totalPage-2}"><a href="">${totalPage-2}</a></li>
                         <li class="paginationjs-ellipsis " data-num="${totalPage-1}"><a>${totalPage-1}</a></li>
                         <li class="paginationjs-page paginationjs-last J-paginationjs-page " data-num="${totalPage}"><a href="">${totalPage}</a></li>
-                        <li class="paginationjs-next J-paginationjs-next disabled"  title="Next page"><a href="">»</a></li>
+                        <li class="paginationjs-next J-paginationjs-next "  title="Next page"><a href="">»</a></li>
                       `;
             }
             if(lastPage == 1){
@@ -817,7 +817,7 @@
                         <li class="paginationjs-page J-paginationjs-page " data-num="${totalPage-2}"><a href="">${totalPage-2}</a></li>
                         <li class="paginationjs-ellipsis active" data-num="${totalPage-1}"><a>${totalPage-1}</a></li>
                         <li class="paginationjs-page paginationjs-last J-paginationjs-page " data-num="${totalPage}"><a href="">${totalPage}</a></li>
-                        <li class="paginationjs-next J-paginationjs-next disabled"  title="Next page"><a href="">»</a></li>
+                        <li class="paginationjs-next J-paginationjs-next "  title="Next page"><a href="">»</a></li>
                       `;
             }
             if(lastPage == 0){
@@ -847,7 +847,7 @@
                         <li class="paginationjs-page J-paginationjs-page " data-num="7"><a href="">7</a></li>
                         <li class="paginationjs-ellipsis disabled" ><a>...</a></li>
                         <li class="paginationjs-page paginationjs-last J-paginationjs-page " data-num="${totalPage}"><a href="">${totalPage}</a></li>
-                        <li class="paginationjs-next J-paginationjs-next disabled"  title="Next page"><a href="">»</a></li>
+                        <li class="paginationjs-next J-paginationjs-next "  title="Next page"><a href="">»</a></li>
                       `;
             }
             if(firstPage == 3){
@@ -861,7 +861,7 @@
                         <li class="paginationjs-page J-paginationjs-page " data-num="7"><a href="">7</a></li>
                         <li class="paginationjs-ellipsis disabled" ><a>...</a></li>
                         <li class="paginationjs-page paginationjs-last J-paginationjs-page " data-num="${totalPage}"><a href="">${totalPage}</a></li>
-                        <li class="paginationjs-next J-paginationjs-next disabled"  title="Next page"><a href="">»</a></li>
+                        <li class="paginationjs-next J-paginationjs-next "  title="Next page"><a href="">»</a></li>
                       `;
             }
             if(firstPage == 2){
@@ -875,7 +875,7 @@
                         <li class="paginationjs-page J-paginationjs-page " data-num="7"><a href="">7</a></li>
                         <li class="paginationjs-ellipsis disabled" ><a>...</a></li>
                         <li class="paginationjs-page paginationjs-last J-paginationjs-page " data-num="${totalPage}"><a href="">${totalPage}</a></li>
-                        <li class="paginationjs-next J-paginationjs-next disabled"  title="Next page"><a href="">»</a></li>
+                        <li class="paginationjs-next J-paginationjs-next "  title="Next page"><a href="">»</a></li>
                       `;
             }
             if(firstPage == 1){
@@ -889,11 +889,11 @@
                         <li class="paginationjs-page J-paginationjs-page " data-num="7"><a href="">7</a></li>
                         <li class="paginationjs-ellipsis disabled" ><a>...</a></li>
                         <li class="paginationjs-page paginationjs-last J-paginationjs-page " data-num="${totalPage}"><a href="">${totalPage}</a></li>
-                        <li class="paginationjs-next J-paginationjs-next disabled"  title="Next page"><a href="">»</a></li>
+                        <li class="paginationjs-next J-paginationjs-next "  title="Next page"><a href="">»</a></li>
                       `;
             }
             if(firstPage == 0){
-              pageHtml += `<li class="paginationjs-prev "><a>«</a></li>
+              pageHtml += `<li class="paginationjs-prev disabled"><a>«</a></li>
                         <li class="paginationjs-page J-paginationjs-page active" data-num="1"><a>1</a></li>  
                        <li class="paginationjs-page J-paginationjs-page " data-num="2"><a>2</a></li>
                        <li class="paginationjs-page J-paginationjs-page" data-num="3"><a href="">3</a></li>
@@ -903,7 +903,7 @@
                         <li class="paginationjs-page J-paginationjs-page " data-num="7"><a href="">7</a></li>
                         <li class="paginationjs-ellipsis disabled" ><a>...</a></li>
                         <li class="paginationjs-page paginationjs-last J-paginationjs-page " data-num="${totalPage}"><a href="">${totalPage}</a></li>
-                        <li class="paginationjs-next J-paginationjs-next disabled"  title="Next page"><a href="">»</a></li>
+                        <li class="paginationjs-next J-paginationjs-next "  title="Next page"><a href="">»</a></li>
                       `;
             }
         }else{
@@ -917,7 +917,7 @@
                         <li class="paginationjs-page J-paginationjs-page " data-num="${toPage+2}"><a href="">${toPage+2}</a></li>
                         <li class="paginationjs-ellipsis disabled" ><a>...</a></li>
                         <li class="paginationjs-page paginationjs-last J-paginationjs-page " data-num="${totalPage}"><a href="">${totalPage}</a></li>
-                        <li class="paginationjs-next J-paginationjs-next disabled"  title="Next page"><a href="">»</a></li>
+                        <li class="paginationjs-next J-paginationjs-next "  title="Next page"><a href="">»</a></li>
                       `;
         }
         $(".paginationjs-pages ul").html(pageHtml);

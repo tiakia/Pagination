@@ -1,0 +1,15 @@
+/* chrome-extension://pkgccpejnmalmdinmhkkfafefagiiiad/template/fehelper_jsonformat.html */
+{
+    "record_count": "20",
+    "size": 10,
+    "goods": [
+        {
+            "goods_id": "43",
+            "goods_name": "普契尼 维托希拉",
+            "goods_thumb": "images/thumb_img/43_thumb_G_1495878222707.jpg",
+            "promote_price": "0.00",
+            "shop_price": "398.00",
+            "url": "goods.php?id=43"
+        },
+    ]
+}
